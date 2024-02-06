@@ -1,5 +1,5 @@
-import { addLink, getLink } from "../../api/link/link";
-import { Box, Button, Flex, Input, Spinner } from "@chakra-ui/react";
+import { addLink } from "../../api/link/link";
+import { Box, Button, Flex, Input } from "@chakra-ui/react";
 import { useRef } from "react";
 import { useMutation } from "react-query";
 import { useUser } from "../../context/useUser";
