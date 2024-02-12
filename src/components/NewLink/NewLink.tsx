@@ -1,19 +1,28 @@
 import { addLink } from "../../api/link/link";
-import { Box, Button, Flex, Input } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, useToast } from "@chakra-ui/react";
 import { useRef } from "react";
 import { useMutation } from "react-query";
 import { useUser } from "../../context/useUser";
 import LoadingOverlay from "../LoadingOverlay/LoadingOverlay";
+import NewLinkResponse from "../NewLinkResponse/NewLinkResponse";
 
 const NewLink = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const mutation = useMutation(addLink);
   const { user } = useUser();
+  const toast = useToast();
 
   const handleAddNewUrl = () => {
     const url = inputRef.current?.value;
     if (!url) {
-      alert("Please enter a valid url");
+      toast({
+        title: "Error",
+        description: "Please enter a valid url.",
+        status: "error",
+        position: "top",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
 
@@ -31,7 +40,7 @@ const NewLink = () => {
 
   return (
     <Box p={4}>
-      <Flex p={4} gap={4} justify={"center"} mt={4} position="relative">
+      <Flex p={4} justify={"center"} mt={4} position="relative">
         <Input
           ref={inputRef}
           p={6}
@@ -43,18 +52,9 @@ const NewLink = () => {
         </Button>
         <LoadingOverlay isLoading={mutation.isLoading} />
       </Flex>
-      <Box p={4} textAlign={"center"}>
-        {mutation.data && (
-          <a
-            href={`${import.meta.env.VITE_BASE_API_URL}${
-              mutation.data.data.id
-            }`}
-          >
-            {import.meta.env.VITE_BASE_API_URL}
-            {mutation.data.data.id}
-          </a>
-        )}
-      </Box>
+      {mutation.data && !mutation.isLoading && (
+        <NewLinkResponse linkId={mutation.data.data.id} />
+      )}
     </Box>
   );
 };
